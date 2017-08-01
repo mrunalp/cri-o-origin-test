@@ -4,6 +4,7 @@
   vars:
       xunit: false
       cni_commit: dcf7368eeab15e2affc6256f0bb1e84dd46a34de
+      origin_commit: release-3.6
   tasks:
     - name: Make sure we have all required packages
       package:
@@ -96,6 +97,7 @@
       git:
         repo: https://github.com/openshift/origin
         dest: /root/go/src/github.com/openshift/origin
+        version: "{{ origin_commit }}"
     - name: build skopeo
       shell: |
               cd /root/go/src/github.com/projectatomic/skopeo && \
