@@ -129,7 +129,7 @@
               mkdir -p /opt/cni/bin && \
               cp bin/* /opt/cni/bin/ && \
               mkdir -p /etc/cni/net.d && \
-              cp /root/go/src/github.com/kubernetes-incubator/cri-o/contrib/cni/99-loopback.conf /etc/cni/net.d
+              cp /root/go/src/github.com/kubernetes-incubator/cri-o/contrib/cni/*.conf /etc/cni/net.d
     - name: build origin
       shell: |
               cd /root/go/src/github.com/openshift/origin && \
