@@ -158,3 +158,24 @@
       shell: |
               cd /root/go/src/github.com/openshift/origin && \
               openshift start --write-config=openshift.local.config
+    - name: modify openshift node config to work with cri-o
+        blockinfile:
+          path: /root/go/src/github.com/openshift/origin/openshift.local.config/node_config/node-config.yml
+          marker: "# ANSIBLE MANAGED BLOCK"
+          insertafter: "kind: NodeConfig"
+          content: |
+                    kubeletArguments:
+                      container-runtime:
+                      - remote
+                      container-runtime-endpoint:
+                      - /var/run/crio.sock
+                      experimental-cri:
+                      - 'true'
+                      image-service-endpoint:
+                      - /var/run/crio.sock
+                      node-labels:
+                      - router=true
+                      - registry=true
+                      runtime-request-timeout:
+                      - 10m
+
