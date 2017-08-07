@@ -155,3 +155,7 @@
         state: started
         enabled: yes
         daemon_reload: yes
+    - name: generate openshift configuration
+      shell: |
+              cd /root/go/src/github.com/openshift/origin && \
+              openshift start --write-config=openshift.local.config
