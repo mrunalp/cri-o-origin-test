@@ -161,7 +161,7 @@
               openshift start --write-config=openshift.local.config
     - name: modify openshift node config to work with cri-o
       blockinfile:
-          path: /root/go/src/github.com/openshift/origin/openshift.local.config/node-localhost.localdomain/node-config.yml
+          path: "{{'/root/go/src/github.com/openshift/origin/openshift.local.config/node-' + ansible_hostname + '/node-config.yaml'}}"
           marker: "# ANSIBLE MANAGED BLOCK"
           insertafter: "kind: NodeConfig"
           content: |
