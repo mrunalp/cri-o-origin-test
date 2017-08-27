@@ -2,9 +2,10 @@
 - hosts: all
   remote_user: root
   vars:
+      ansible_python_interpreter: "/usr/bin/python3"
       xunit: false
       cni_commit: dcf7368eeab15e2affc6256f0bb1e84dd46a34de
-      origin_commit: release-3.6
+      origin_commit: v3.7.0-alpha.0
   tasks:
     - name: Make sure we have all required packages
       package:
@@ -48,6 +49,7 @@
         - gpgme
         - libassuan
         - libselinux-python
+        - python2
     - name: Make testing directories to conform to testing standards
       file:
         path: "{{ item }}"
@@ -73,7 +75,9 @@
         state: started
         enabled: yes
     - name: update all
-      yum: name=* state=latest
+      dnf:
+        name: '*'
+        state: latest
     - name: clone runc
       git:
         repo: https://github.com/opencontainers/runc
@@ -161,7 +165,7 @@
               openshift start --write-config=openshift.local.config
     - name: modify openshift node config to work with cri-o
       blockinfile:
-          path: "{{'/root/go/src/github.com/openshift/origin/openshift.local.config/node-' + ansible_hostname + '/node-config.yaml'}}"
+          path: "{{'/root/go/src/github.com/openshift/origin/openshift.local.config/node-' + ansible_nodename + '/node-config.yaml'}}"
           marker: "# ANSIBLE MANAGED BLOCK"
           insertafter: "kind: NodeConfig"
           content: |
@@ -170,8 +174,6 @@
                       - remote
                       container-runtime-endpoint:
                       - /var/run/crio.sock
-                      experimental-cri:
-                      - 'true'
                       image-service-endpoint:
                       - /var/run/crio.sock
                       node-labels:
@@ -179,4 +181,10 @@
                       - registry=true
                       runtime-request-timeout:
                       - 10m
+    - name: flush iptables
+      iptables: flush=yes
+    - name: Permanently disable selinux
+      selinux:
+        state: permissive
+        policy: targeted
 
